@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=
+includedir=${prefix}@include_postfix@
+
+Name: qogon
+Description: ogon platform plugin for Qt (ogon-platform-qt)
+Version: @version@
+Libs:
+Cflags: -I${includedir}
