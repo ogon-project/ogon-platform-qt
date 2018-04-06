@@ -61,7 +61,7 @@ If PREFIX is used it might be necessary to copy/link the platform libraries and 
 qt's platform plugin directory or add the path to the environment variable
 QT_QPA_PLATFORM_PLUGIN_PATH or run the application with -platformpluginpath.
 
-[support]: https://github.com/ogon-project/ogon-project/SUPPORT.md
-[bugs]: https://github.com/ogon-project/ogon-project/SUPPORT.md#bugs
-[documentation]: https://github.com/ogon-project/ogon-project/SUPPORT.md#documentation
-[contribute]: https://github.com/ogon-project/ogon-project/CONTRIBUTING.md
+[support]: https://github.com/ogon-project/ogon-project/blob/master/SUPPORT.md
+[bugs]: https://github.com/ogon-project/ogon-project/blob/master/SUPPORT.md#bugs
+[documentation]: https://github.com/ogon-project/ogon-project/blob/master/SUPPORT.md#documentation
+[contribute]: https://github.com/ogon-project/ogon-project/blob/master/CONTRIBUTING.md
