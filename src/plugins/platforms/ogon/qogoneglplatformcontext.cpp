@@ -35,7 +35,7 @@
 
 #include <QList>
 #include <qdebug.h>
-
+#include <EGL/eglext.h>
 
 struct QOgonEglPlatformContextPriv {
     int drmFd;
@@ -100,6 +100,8 @@ bool QOgonEglPlatformContext::haveRenderNodesSupport() {
 	return ms_deviceName.size();
 }
 
+static PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = nullptr;
+
 QOgonEglPlatformContext *QOgonEglPlatformContext::createInstance(const QSurfaceFormat &format,
 		QPlatformOpenGLContext *share, QOgonWindowManager *wm)
 {
@@ -132,6 +134,13 @@ QOgonEglPlatformContext *QOgonEglPlatformContext::createInstance(const QSurfaceF
 	}
 
 #ifdef EGL_MESA_platform_gbm
+	if (!eglGetPlatformDisplayEXT) {
+		eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
+		if (!eglGetPlatformDisplayEXT) {
+			qFatal("unable to retrieve eglGetPlatformDisplayEXT function");
+			goto error_gbm;
+		}
+	}
 	dpy = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, gbm, NULL);
 #else
 	dpy = eglGetDisplay(gbm);
@@ -175,7 +184,6 @@ QOgonEglPlatformContext::QOgonEglPlatformContext(const QSurfaceFormat &format, Q
 				QEGLPlatformContext(format, share, display),
 				d(new QOgonEglPlatformContextPriv()),
 				mWm(wm)
-
 {
 	d->drmFd = fd;
 	d->gbm = gbm;

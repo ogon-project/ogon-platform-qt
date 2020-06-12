@@ -103,7 +103,7 @@ bool parseParams(const QStringList& paramList, bool &allowReconnection) {
 
 QOgonPlatform::QOgonPlatform(const QStringList& paramList)
     : mFontDb(new QGenericUnixFontDatabase()),
-#if QT_VERSION < 0x050200
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
     mEventDispatcher(createUnixEventDispatcher()),
 #endif
 	mWindowManager(0),
@@ -116,7 +116,7 @@ QOgonPlatform::QOgonPlatform(const QStringList& paramList)
 	wLogAppender *wlog_appender;
 	wLog *wlog_root;
 
-#if QT_VERSION < 0x050200
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
 	QGuiApplicationPrivate::instance()->setEventDispatcher(mEventDispatcher);
 #endif
 
@@ -147,9 +147,13 @@ QOgonPlatform::QOgonPlatform(const QStringList& paramList)
 	}
 
 	mWindowManager = new QOgonWindowManager(this, mScreenGeometry, NULL, mAllowReconnection);
+#if QT_VERSION < QT_VERSION_CHECK(5, 13, 0)
 	screenAdded(mWindowManager->mScreen);
+#else
+	QWindowSystemInterface::handleScreenAdded(mWindowManager->mScreen);
+#endif
 
-#if QT_VERSION < 0x050200
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
 	initialize();
 #endif
 
@@ -213,7 +217,7 @@ QPlatformBackingStore *QOgonPlatform::createPlatformBackingStore(QWindow *window
     return new QOgonBackingStore(window, (QOgonPlatform *)this);
 }
 
-#if QT_VERSION < 0x050200
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
 QAbstractEventDispatcher *QOgonPlatform::guiThreadEventDispatcher() const {
     return mEventDispatcher;
 }
@@ -252,7 +256,7 @@ QPlatformOpenGLContext *QOgonPlatform::createPlatformOpenGLContext(QOpenGLContex
 	return mEglContext;
 }
 
-#if QT_VERSION > 0x050300
+#if QT_VERSION > QT_VERSION_CHECK(5, 3, 0)
 QOpenGLContext::OpenGLModuleType QOgonPlatform::openGLModuleType() {
 	return QOpenGLContext::LibGLES;
 }
@@ -265,7 +269,7 @@ bool QOgonPlatform::hasCapability(
 	case ThreadedOpenGL:
 		return false;
 
-#if QT_VERSION >= 0x050300
+#if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
 	case RasterGLSurface:
 		return false;
 #endif

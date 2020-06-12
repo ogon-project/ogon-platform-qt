@@ -40,9 +40,9 @@ CONFIG += link_pkgconfig qpa/genericunixfontdatabase
 
 QT += core-private gui-private network widgets
 lessThan(QT_MINOR_VERSION, 8) {
-QT += platformsupport-private
+	QT += platformsupport-private
 } else {
-QT += fontdatabase_support_private eventdispatcher_support_private  theme_support_private egl_support_private
+	QT += fontdatabase_support_private eventdispatcher_support_private  theme_support_private egl_support_private
 }
 
 
