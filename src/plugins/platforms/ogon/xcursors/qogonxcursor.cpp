@@ -288,8 +288,8 @@ struct ogon_cursor *QOgonCursor::requestCursor(OgonCursor shape) {
 	}
 
 	//If there still no cursor for a shape, use the default cursor
-    if (!cursor && shape != ArrowCursor)
-        cursor = requestCursor(ArrowCursor);
+	if (!cursor && shape != ArrowCursor)
+		cursor = requestCursor(ArrowCursor);
 
 	return cursor;
 }

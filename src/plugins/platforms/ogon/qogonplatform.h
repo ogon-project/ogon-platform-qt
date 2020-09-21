@@ -69,11 +69,11 @@ public:
     virtual QPlatformInputContext *inputContext() const;
 #ifdef BUILD_RENDER_NODES
     virtual QPlatformOpenGLContext *createPlatformOpenGLContext(QOpenGLContext *context) const;
-#if QT_VERSION > 0x050300
+#if QT_VERSION > QT_VERSION_CHECK(5, 3, 0)
     virtual QOpenGLContext::OpenGLModuleType openGLModuleType();
 #endif
 #endif
-#if QT_VERSION < 0x050200
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
     virtual QAbstractEventDispatcher *guiThreadEventDispatcher() const;
 #else
     virtual QAbstractEventDispatcher *createEventDispatcher() const;
@@ -83,7 +83,7 @@ public:
 
 protected:
     QPlatformFontDatabase *mFontDb;
-#if QT_VERSION < 0x050200
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
     QAbstractEventDispatcher *mEventDispatcher;
 #endif
     QOgonWindowManager *mWindowManager;
