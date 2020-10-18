@@ -1,0 +1,3 @@
+usr/lib/*/*.so*
+usr/lib/*/qt5/plugins/*/*.so*
+usr/share/qt5/translations/*.qm
