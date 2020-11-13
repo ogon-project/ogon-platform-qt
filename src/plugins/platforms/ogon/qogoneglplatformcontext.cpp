@@ -35,6 +35,7 @@
 
 #include <QList>
 #include <qdebug.h>
+
 #include <EGL/eglext.h>
 
 struct QOgonEglPlatformContextPriv {
@@ -99,7 +100,6 @@ bool QOgonEglPlatformContext::haveRenderNodesSupport() {
 
 	return ms_deviceName.size();
 }
-
 static PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = nullptr;
 
 QOgonEglPlatformContext *QOgonEglPlatformContext::createInstance(const QSurfaceFormat &format,
@@ -134,7 +134,10 @@ QOgonEglPlatformContext *QOgonEglPlatformContext::createInstance(const QSurfaceF
 	}
 
 #ifdef EGL_MESA_platform_gbm
-	if (!eglGetPlatformDisplayEXT) {
+#ifdef EGL_VERSION_1_5
+        dpy = eglGetPlatformDisplay(EGL_PLATFORM_GBM_MESA, gbm, NULL);
+#else
+        if (!eglGetPlatformDisplayEXT) {
 		eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
 		if (!eglGetPlatformDisplayEXT) {
 			qFatal("unable to retrieve eglGetPlatformDisplayEXT function");
@@ -142,6 +145,7 @@ QOgonEglPlatformContext *QOgonEglPlatformContext::createInstance(const QSurfaceF
 		}
 	}
 	dpy = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, gbm, NULL);
+#endif
 #else
 	dpy = eglGetDisplay(gbm);
 #endif
@@ -179,14 +183,17 @@ error:
 	return 0;
 }
 
-QOgonEglPlatformContext::QOgonEglPlatformContext(const QSurfaceFormat &format, QPlatformOpenGLContext *share,
-								EGLDisplay display, int fd, struct gbm_device *gbm, QOgonWindowManager *wm) :
-				QEGLPlatformContext(format, share, display),
-				d(new QOgonEglPlatformContextPriv()),
-				mWm(wm)
+QOgonEglPlatformContext::QOgonEglPlatformContext(const QSurfaceFormat &format,
+                                                 QPlatformOpenGLContext *share,
+                                                 EGLDisplay display, int fd,
+                                                 struct gbm_device *gbm,
+                                                 QOgonWindowManager *wm)
+    : QEGLPlatformContext(format, share, display),
+      d(new QOgonEglPlatformContextPriv()), mWm(wm)
+
 {
-	d->drmFd = fd;
-	d->gbm = gbm;
+  d->drmFd = fd;
+  d->gbm = gbm;
 }
 
 struct gbm_device *QOgonEglPlatformContext::gbm() {
