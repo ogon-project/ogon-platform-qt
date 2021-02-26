@@ -53,7 +53,7 @@ protected:
 
 	Qt::TouchPointState stateFromTouchData(RDPINPUT_CONTACT_DATA *data);
 
-	void treatTouchEvent(RDPINPUT_TOUCH_EVENT *touchEvent);
+	void treatTouchEvent(const RDPINPUT_TOUCH_EVENT *touchEvent);
 
 	void treatTouchPointsDiff(TouchPointList &touchPoints);
 
@@ -71,7 +71,7 @@ protected:
 	TouchPointList mPrevTouchPoints;
 
 	static UINT onClientReady(RdpeiServerContext *context);
-	static UINT onTouchEvent(RdpeiServerContext *context, RDPINPUT_TOUCH_EVENT *touchEvent);
+	static UINT onTouchEvent(RdpeiServerContext *context, const RDPINPUT_TOUCH_EVENT *touchEvent);
 };
 
 #endif /* __QOGON_TOUCH_H__ */
