@@ -96,7 +96,7 @@ UINT QOgonTouch::onClientReady(RdpeiServerContext *context) {
 	return CHANNEL_RC_OK;
 }
 
-static QTouchDevice::Capabilities scanCapabilitiesInTouchData(RDPINPUT_TOUCH_EVENT *touchEvent) {
+static QTouchDevice::Capabilities scanCapabilitiesInTouchData(const RDPINPUT_TOUCH_EVENT *touchEvent) {
 	QTouchDevice::Capabilities ret = 0;
 
 	for (UINT16 i = 0; i < touchEvent->frameCount; i++) {
@@ -156,7 +156,7 @@ void QOgonTouch::treatTouchPointsDiff(QOgonTouch::TouchPointList &touchPoints) {
 }
 
 
-void QOgonTouch::treatTouchEvent(RDPINPUT_TOUCH_EVENT *touchEvent) {
+void QOgonTouch::treatTouchEvent(const RDPINPUT_TOUCH_EVENT *touchEvent) {
 	if (!mDevice) {
 		/* The touch device is created on the fly as we set the capabilities from the
 		 * first received touch event */
@@ -225,14 +225,21 @@ void QOgonTouch::treatTouchEvent(RDPINPUT_TOUCH_EVENT *touchEvent) {
 
 		QWindowSystemInterface::handleTouchEvent(targetWindow, mTimestamp, mDevice, touchPoints);
 	}
-
-
 }
 
-UINT QOgonTouch::onTouchEvent(RdpeiServerContext *context, RDPINPUT_TOUCH_EVENT *touchEvent) {
-	QOgonTouch *touch = (QOgonTouch *)context->user_data;
-
+UINT QOgonTouch::onTouchEvent(RdpeiServerContext *context, const RDPINPUT_TOUCH_EVENT *touchEvent) {
+	QOgonTouch *touch = static_cast<QOgonTouch *>(context->user_data);
 	touch->treatTouchEvent(touchEvent);
 	return CHANNEL_RC_OK;
 }
 
+UINT QOgonTouch::onTouchReleased(RdpeiServerContext *context, BYTE contactId) {
+	QOgonTouch *touch = static_cast<QOgonTouch *>(context->user_data);
+	// TODO
+	return CHANNEL_RC_OK;
+}
+
+UINT QOgonTouch::onPenEvent(RdpeiServerContext *context, const RDPINPUT_PEN_EVENT *penEvent) {
+	QOgonTouch *touch = static_cast<QOgonTouch *>(context->user_data);
+	return CHANNEL_RC_OK;
+}
