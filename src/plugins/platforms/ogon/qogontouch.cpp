@@ -227,10 +227,15 @@ void QOgonTouch::treatTouchEvent(const RDPINPUT_TOUCH_EVENT *touchEvent) {
 	}
 }
 
+#if USE_OLD_FREERDP_TOUCH_API()
+UINT QOgonTouch::onTouchEvent(RdpeiServerContext *context,
+                              RDPINPUT_TOUCH_EVENT *touchEvent) {
+#else
 UINT QOgonTouch::onTouchEvent(RdpeiServerContext *context, const RDPINPUT_TOUCH_EVENT *touchEvent) {
-	QOgonTouch *touch = static_cast<QOgonTouch *>(context->user_data);
-	touch->treatTouchEvent(touchEvent);
-	return CHANNEL_RC_OK;
+#endif
+  QOgonTouch *touch = static_cast<QOgonTouch *>(context->user_data);
+  touch->treatTouchEvent(touchEvent);
+  return CHANNEL_RC_OK;
 }
 
 UINT QOgonTouch::onTouchReleased(RdpeiServerContext *context, BYTE contactId) {
@@ -239,7 +244,9 @@ UINT QOgonTouch::onTouchReleased(RdpeiServerContext *context, BYTE contactId) {
 	return CHANNEL_RC_OK;
 }
 
+#if !USE_OLD_FREERDP_TOUCH_API()
 UINT QOgonTouch::onPenEvent(RdpeiServerContext *context, const RDPINPUT_PEN_EVENT *penEvent) {
 	QOgonTouch *touch = static_cast<QOgonTouch *>(context->user_data);
 	return CHANNEL_RC_OK;
 }
+#endif

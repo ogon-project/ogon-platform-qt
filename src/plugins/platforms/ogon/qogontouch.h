@@ -29,14 +29,18 @@
 #ifndef __QOGON_TOUCH_H__
 #define __QOGON_TOUCH_H__
 
-
 #include <freerdp/server/rdpei.h>
+#include <freerdp/version.h>
 
 #include <QtGui/qpa/qwindowsysteminterface.h>
 
 class QSocketNotifier;
 class QOgonWindowManager;
 class QTouchDevice;
+
+#define USE_OLD_FREERDP_TOUCH_API()                                            \
+  ((FREERDP_VERSION_MAJOR < 2) ||                                             \
+   ((FREERDP_VERSION_MAJOR == 2) && (FREERDP_VERSION_MINOR < 3)))
 
 /** @brief */
 class QOgonTouch : public QObject {
@@ -70,10 +74,18 @@ protected:
 
 	TouchPointList mPrevTouchPoints;
 
-	static UINT onClientReady(RdpeiServerContext *context);
-	static UINT onTouchEvent(RdpeiServerContext *context, const RDPINPUT_TOUCH_EVENT *touchEvent);
-	static UINT onTouchReleased(RdpeiServerContext *context, BYTE contactId);
-	static UINT onPenEvent(RdpeiServerContext *context, const RDPINPUT_PEN_EVENT *penEvent);
+        static UINT onClientReady(RdpeiServerContext *context);
+        static UINT onTouchReleased(RdpeiServerContext *context,
+                                    BYTE contactId);
+#if USE_OLD_FREERDP_TOUCH_API()
+        static UINT onTouchEvent(RdpeiServerContext *context,
+                                 RDPINPUT_TOUCH_EVENT *touchEvent);
+#else
+        static UINT onTouchEvent(RdpeiServerContext *context,
+                                 const RDPINPUT_TOUCH_EVENT *touchEvent);
+        static UINT onPenEvent(RdpeiServerContext *context,
+                               const RDPINPUT_PEN_EVENT *penEvent);
+#endif
 };
 
 #endif /* __QOGON_TOUCH_H__ */
