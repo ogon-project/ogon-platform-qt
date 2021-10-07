@@ -276,20 +276,28 @@ void qimage_bitblt(const QRect &srcRect, const QImage *srcImg, const QPoint &dst
 }
 
 void qimage_fillrect(const QRect &rect, QImage *dest, quint32 color) {
+	QRect screenGeometry = QRect(0, 0, dest->width(), dest->height());;
+	// clip to screen size
+	QRect toFill = rect.intersected(screenGeometry); 
+	QPoint topLeft = toFill.topLeft();
+	int offset = toFill.left();
+	int stride = dest->bytesPerLine();
+
+	uchar *first = (dest->bits() + ((topLeft.y()) * stride) +
+		(topLeft.x() * 4));
+	quint32 *firstPoint = (quint32 *)first;
+
 	// prepare first line
-	quint32 *firstLine = (quint32 *)dest->bits();
-	for(int w = 0; w < rect.width(); w++, firstLine++)
-		*firstLine = color;
+	for (int w = 0; w < toFill.width(); w++, firstPoint++)
+		*firstPoint = color;
+
+	uchar *ptr = dest->bits() +
+		((topLeft.y() + 1) * stride) +
+		(topLeft.x() * 4);
 
 	// and copy it
-	int stride = dest->bytesPerLine();
-	QPoint topLeft = rect.topLeft();
-	uchar *ptr = dest->bits() +
-			((topLeft.y() + 1) * stride) +
-			(topLeft.x() * 4);
-
-	for(int h = 1; h < rect.height(); h++, ptr += stride)
-		memcpy(ptr, dest->bits(), stride);
+	for (int h = 1; h < toFill.height(); h++, ptr += stride)
+		memcpy(ptr, first , toFill.width() * 4);
 }
 
 void QOgonWindowManager::repaint(const QRegion &region) {
